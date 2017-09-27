@@ -13,5 +13,6 @@ public class Tokenization {
         Tokenizer tokenizer = new Tokenizer(testString, delimeters);
         List<String> tokens = tokenizer.getTokens();
         System.out.println(tokens);
+        System.out.println("Количество токенов: " + tokens.size());
     }
 }
