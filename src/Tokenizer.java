@@ -10,15 +10,13 @@ class Tokenizer {
 
     String srcStr;
     int index = 0;
-    String delimeters;
+    String delimeterStr;
 
-    List<String> tokens;
 
-    Tokenizer(String srcStr, String delimeters) {
+    Tokenizer(String srcStr, String delimeterStr) {
         currentState = States.Init;
         this.srcStr = srcStr;
-        this.delimeters = delimeters;
-        tokens = new ArrayList<>();
+        this.delimeterStr = delimeterStr;
     }
 
     /*
@@ -31,21 +29,42 @@ class Tokenizer {
 
  */
 
+    // Граф состояний:
+
+    /**************************************
+     *                                    *
+     *       (INIT_STATE)                 *
+     *         |      \                   *
+     *         |       \                  *
+     *         |        \                 *
+     *         |         \                *
+     *   letter|          \delimeter      *
+     *         |           \              *
+     *         |   letter   \             *
+     *        \/   <-----   \/            *
+     *      (LETTER)     (DELIMETER)      *
+     *             ----->                 *
+     *            delimeter               *
+     *                                    *
+     **************************************/
+
     List getTokens() {
         char c;
         StringBuilder token = new StringBuilder();
+        List<String> tokenList = new ArrayList<>();
+
         while (true) {
             if (index == srcStr.length()) {
-                if(currentState == States.Letter)                       // последнее состояние - Letter, значит,
-                    tokens.add(token.toString());                       // сохраняем последний токен
-                return tokens;
+                if (currentState == States.Letter)                      // последнее состояние - Letter, значит,
+                    tokenList.add(token.toString());                    // сохраняем последний токен
+                return tokenList;
             }
 
             c = srcStr.charAt(index++);
 
             switch (currentState) {
                 case Init:
-                    if (!delimeters.contains(String.valueOf(c))) {      // прочитанный символ - не разделитель (буква)
+                    if (!delimeterStr.contains(String.valueOf(c))) {    // прочитанный символ - не разделитель (буква)
                         currentState = States.Letter;
                         token.append(c);                                // начало токена, увеличиваем буфер
                     } else {                                            // прочитанный символ - разделитель
@@ -54,17 +73,17 @@ class Tokenizer {
                     break;
 
                 case Letter:
-                    if (!delimeters.contains(String.valueOf(c))) {      // прочитанный символ - не разделитель (буква)
+                    if (!delimeterStr.contains(String.valueOf(c))) {    // прочитанный символ - не разделитель (буква)
                         token.append(c);                                // продолжение токена, увеличиваем буфер
                     } else {                                            // прочитанный символ - разделитель
                         currentState = States.Delimeter;
-                        tokens.add(token.toString());                   // конец токена, сохраняем
+                        tokenList.add(token.toString());                // конец токена, сохраняем
                         token.setLength(0);
                     }
                     break;
 
                 case Delimeter:
-                    if (!delimeters.contains(String.valueOf(c))) {      // прочитанный символ - не разделитель (буква)
+                    if (!delimeterStr.contains(String.valueOf(c))) {    // прочитанный символ - не разделитель (буква)
                         currentState = States.Letter;
                         token.append(c);                                // начало токена, увеличиваем буфер
                     }

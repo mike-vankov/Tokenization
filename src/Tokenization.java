@@ -5,7 +5,7 @@ import java.util.List;
  */
 public class Tokenization {
 
-    static String testString = "один ...  !? два,,   три,   (четыре). пять,,!& шесть";
+    static String testString = "; один ...  !? два,,   три,   (четыре). пять,,!& шесть";
     static String delimeters = "./&!?, ();";
 
     public static void main(String[] args) {
@@ -13,6 +13,5 @@ public class Tokenization {
         Tokenizer tokenizer = new Tokenizer(testString, delimeters);
         List<String> tokens = tokenizer.getTokens();
         System.out.println(tokens);
-        System.out.println("Количество токенов: " + tokens.size());
     }
 }
